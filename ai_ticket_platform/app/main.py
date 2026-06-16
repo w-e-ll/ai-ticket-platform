@@ -134,14 +134,42 @@ def create_app() -> FastAPI:
 def register_routes(app: FastAPI, settings: Settings) -> None:
     """Register API routes."""
     try:
+        from ai_ticket_platform.app.api.admin import router as admin_router
+        from ai_ticket_platform.app.api.chat import router as chat_router
+        from ai_ticket_platform.app.api.documents import (
+            router as documents_router,
+        )
         from ai_ticket_platform.app.api.health import (
             router as health_router,
+        )
+        from ai_ticket_platform.app.api.tickets import (
+            router as tickets_router,
         )
 
         app.include_router(
             health_router,
             prefix=settings.api_v1_prefix,
             tags=["Health"],
+        )
+        app.include_router(
+            documents_router,
+            prefix=settings.api_v1_prefix,
+            tags=["Documents"],
+        )
+        app.include_router(
+            tickets_router,
+            prefix=settings.api_v1_prefix,
+            tags=["Tickets"],
+        )
+        app.include_router(
+            chat_router,
+            prefix=settings.api_v1_prefix,
+            tags=["Chat"],
+        )
+        app.include_router(
+            admin_router,
+            prefix=settings.api_v1_prefix,
+            tags=["Admin"],
         )
 
         logger.info(
@@ -151,6 +179,13 @@ def register_routes(app: FastAPI, settings: Settings) -> None:
                 "operation": "register_routes",
                 "status": "success",
                 "api_prefix": settings.api_v1_prefix,
+                "routers": [
+                    "health",
+                    "documents",
+                    "tickets",
+                    "chat",
+                    "admin",
+                ],
             },
         )
 
@@ -165,7 +200,6 @@ def register_routes(app: FastAPI, settings: Settings) -> None:
             },
             exc_info=True,
         )
-
         raise
 
 

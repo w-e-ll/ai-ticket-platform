@@ -49,7 +49,7 @@ async def upload_document(
             "operation": "upload_document",
             "status": "started",
             "tenant_id": str(tenant_id),
-            "filename": file.filename,
+            "document_filename": file.filename,
             "content_type": file.content_type,
             "department": department,
         },
@@ -71,7 +71,7 @@ async def upload_document(
             "status": "success",
             "tenant_id": str(tenant_id),
             "document_id": str(document.id),
-            "filename": document.filename,
+            "document_filename": document.filename,
             "chunk_count": document.chunk_count,
         },
     )
@@ -116,7 +116,7 @@ async def get_document(
             "status": "success",
             "tenant_id": str(tenant_id),
             "document_id": str(document.id),
-            "filename": document.filename,
+            "document_filename": document.filename,
         },
     )
 

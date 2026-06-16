@@ -4,6 +4,22 @@ Enterprise-grade AI-powered ticket classification and Retrieval-Augmented Genera
 
 ---
 
+## Screenshots
+
+### Upload Knowledge Base Documents
+
+![Upload Documents](ai_ticket_platform/docs/upload.png)
+
+### Create AI Support Tickets
+
+![Create Ticket](ai_ticket_platform/docs/create.png)
+
+### Admin Panel
+
+![Admin Panel](ai_ticket_platform/docs/admin.png)
+
+---
+
 # Features
 
 * AI-powered ticket classification
@@ -14,12 +30,52 @@ Enterprise-grade AI-powered ticket classification and Retrieval-Augmented Genera
 * Streamlit frontend UI
 * FastAPI backend APIs
 * Background workers with Celery
-* Multi-tenant ready architecture
-* Structured logging
-* Dockerized deployment
+* Multi-tenant architecture
+* Structured JSON logging
+* Async PostgreSQL support
+* Redis integration
 * ML classifier training pipeline
-* Async PostgreSQL integration
+* Dockerized infrastructure
 * Modular enterprise architecture
+
+---
+
+# Current Status
+
+## Working Features
+
+* Ticket creation
+* AI classification
+* Document upload and indexing
+* RAG pipeline
+* OpenAI embeddings
+* Streamlit frontend
+* PostgreSQL persistence
+* Celery workers
+* Redis queue integration
+* Multi-tenant support
+
+---
+
+## Current Limitation
+
+The current vector store implementation uses:
+
+```text
+InMemoryVectorStore
+```
+
+This means:
+
+* embeddings are NOT persisted
+* vectors are lost after backend restart
+* RAG search only works during active runtime session
+
+Planned upgrade:
+
+```text
+PostgreSQL pgvector integration
+```
 
 ---
 
@@ -29,7 +85,7 @@ Enterprise-grade AI-powered ticket classification and Retrieval-Augmented Genera
 
 * Python 3.12+
 * FastAPI
-* SQLAlchemy
+* SQLAlchemy Async ORM
 * PostgreSQL
 * Redis
 * Celery
@@ -42,7 +98,8 @@ Enterprise-grade AI-powered ticket classification and Retrieval-Augmented Genera
 * Sentence Transformers
 * scikit-learn
 * RAG pipeline
-* Vector similarity search
+* Embedding generation
+* Semantic similarity search
 
 ---
 
@@ -67,50 +124,51 @@ ai-ticket-platform/
 │
 ├── ai_ticket_platform/
 │   ├── app/
-│   │   ├── api/
 │   │   ├── ai/
+│   │   │   ├── chunking.py
+│   │   │   ├── embeddings.py
+│   │   │   ├── evaluation.py
+│   │   │   ├── prompts.py
+│   │   │   └── vector_store.py
+│   │   │
+│   │   ├── api/
+│   │   │   ├── admin.py
+│   │   │   ├── chat.py
+│   │   │   ├── documents.py
+│   │   │   ├── health.py
+│   │   │   └── tickets.py
+│   │   │
 │   │   ├── models/
+│   │   │   ├── db.py
+│   │   │   └── schemas.py
+│   │   │
 │   │   ├── services/
-│   │   ├── utils/
+│   │   │   ├── classifier_service.py
+│   │   │   ├── document_service.py
+│   │   │   ├── llm_service.py
+│   │   │   ├── rag_service.py
+│   │   │   └── ticket_service.py
+│   │   │
 │   │   ├── workers/
+│   │   │   └── tasks.py
+│   │   │
 │   │   ├── config.py
 │   │   ├── database.py
 │   │   ├── main.py
 │   │   └── security.py
 │   │
 │   ├── docs/
-│   │   ├── ai_pipeline.md
-│   │   ├── api.md
-│   │   └── architecture.md
-│   │
 │   ├── frontend/
-│   │   └── streamlit_app.py
-│   │
 │   ├── scripts/
-│   │   ├── ingest_documents.py
-│   │   ├── seed_data.py
-│   │   └── train_classifier.py
-│   │
 │   └── tests/
-│       ├── test_classifier.py
-│       ├── test_rag.py
-│       └── test_tickets.py
 │
+├── uploads/
+├── logs/
 ├── var/
-│   ├── data/
-│   │   ├── models/
-│   │   ├── processed/
-│   │   └── uploads/
-│   │
-│   └── log/
-│
-├── .env.example
-├── Dockerfile
 ├── docker-compose.yml
-├── Makefile
+├── Dockerfile
 ├── pyproject.toml
 ├── CHANGELOG.md
-├── README.md
 └── VERSION.txt
 ```
 
@@ -138,45 +196,6 @@ LLM   Classifier  Vector Store
  ▼
 OpenAI API
 ```
-
----
-
-# Core AI Capabilities
-
-## 1. Ticket Classification
-
-The platform automatically predicts the correct support department:
-
-* HR
-* IT
-* Transportation
-* Finance
-* Operations
-
-using embeddings and machine learning classification.
-
----
-
-## 2. Retrieval-Augmented Generation (RAG)
-
-The platform supports enterprise semantic search:
-
-1. Upload documents
-2. Chunk documents
-3. Generate embeddings
-4. Store vectors
-5. Retrieve context
-6. Generate grounded AI responses
-
----
-
-## 3. Vector Search
-
-Semantic similarity search allows:
-
-* enterprise knowledge retrieval
-* contextual chatbot responses
-* intelligent support automation
 
 ---
 
@@ -226,7 +245,7 @@ pip install -e .
 
 # Environment Variables
 
-Create `.env` file:
+Create `.env`
 
 ```env
 APP_NAME=AI Ticket Platform
@@ -238,7 +257,7 @@ API_PORT=8000
 
 OPENAI_API_KEY=your_openai_api_key
 
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/ai_ticket_platform
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5433/ai_ticket_platform
 
 REDIS_URL=redis://localhost:6379/0
 
@@ -249,62 +268,128 @@ VECTOR_STORE_BACKEND=inmemory
 
 ---
 
-# Running Application
+# Infrastructure Startup
 
-# Start FastAPI Backend
+## Start Redis
+
+If Redis container already exists:
+
+```bash
+docker start ai-ticket-redis
+```
+
+Or create new:
+
+```bash
+docker-compose up -d redis
+```
+
+---
+
+## Start PostgreSQL
+
+Recommended Docker port:
+
+```text
+5433
+```
+
+because local Ubuntu PostgreSQL often already occupies:
+
+```text
+5432
+```
+
+Start container:
+
+```bash
+docker-compose up -d postgres
+```
+
+---
+
+# Initialize Database
+
+Connect:
+
+```bash
+psql -h localhost -p 5433 -U postgres -d ai_ticket_platform
+```
+
+---
+
+## Create Demo Tenant
+
+```sql
+INSERT INTO tenants (id, name, is_active)
+VALUES (
+    '11111111-1111-1111-1111-111111111112',
+    'Demo Tenant',
+    true
+);
+```
+
+---
+
+## Create Demo User
+
+```sql
+INSERT INTO users (
+    id,
+    tenant_id,
+    email,
+    full_name,
+    hashed_password,
+    role,
+    is_active
+)
+VALUES (
+    '22222222-2222-2222-2222-222222222222',
+    '11111111-1111-1111-1111-111111111112',
+    'demo.user@example.com',
+    'Demo User',
+    'demo_password_hash',
+    'admin',
+    true
+);
+```
+
+---
+
+# Run Backend
 
 ```bash
 uvicorn ai_ticket_platform.app.main:app --reload
 ```
 
+Swagger:
+
+```text
+http://localhost:8000/docs
+```
+
 ---
 
-# Start Streamlit Frontend
+# Run Frontend
 
 ```bash
 streamlit run ai_ticket_platform/frontend/streamlit_app.py
 ```
 
----
-
-# Start Celery Worker
-
-```bash
-celery -A ai_ticket_platform.app.workers.tasks worker --loglevel=info
-```
-
----
-
-# Docker Deployment
-
-# Build Containers
-
-```bash
-docker compose build
-```
-
----
-
-# Start Platform
-
-```bash
-docker compose up
-```
-
----
-
-# API Documentation
-
-After startup:
+Frontend:
 
 ```text
-Swagger UI:
-http://localhost:8000/docs
+http://localhost:8501
 ```
 
-```text
-ReDoc:
-http://localhost:8000/redoc
+---
+
+# Run Celery Worker
+
+Correct startup command:
+
+```bash
+celery -A ai_ticket_platform.app.workers.tasks.celery_app worker --loglevel=info
 ```
 
 ---
@@ -314,7 +399,7 @@ http://localhost:8000/redoc
 | Endpoint                      | Description      |
 | ----------------------------- | ---------------- |
 | GET /health                   | Health check     |
-| POST /api/v1/chat/query       | AI RAG query     |
+| POST /api/v1/chat/ask         | AI RAG query     |
 | POST /api/v1/tickets          | Create ticket    |
 | GET /api/v1/tickets           | List tickets     |
 | POST /api/v1/documents/upload | Upload documents |
@@ -322,67 +407,61 @@ http://localhost:8000/redoc
 
 ---
 
-# AI Workflow
+# Working Local Flow
 
-## Document Ingestion
+## 1. Upload Documents
+
+Upload:
+
+* PDF
+* DOCX
+* TXT
+
+through Streamlit UI.
+
+---
+
+## 2. Documents Are Processed
+
+Pipeline:
 
 ```text
-PDF/DOCX
-   ↓
+Document
+  ↓
 Chunking
-   ↓
-Embeddings
-   ↓
-Vector Index
+  ↓
+Embedding Generation
+  ↓
+InMemoryVectorStore
 ```
 
 ---
 
-## RAG Query Flow
+## 3. Ask AI Questions
+
+Questions are answered using:
 
 ```text
-Question
-   ↓
-Embedding
-   ↓
-Similarity Search
-   ↓
-Context Retrieval
-   ↓
-OpenAI Completion
-```
-
----
-
-## Ticket Classification Flow
-
-```text
-User Ticket
-    ↓
-Embedding
-    ↓
-Classifier
-    ↓
-Department Prediction
+semantic similarity + retrieved context + OpenAI
 ```
 
 ---
 
 # Logging
 
-Structured logging is enabled across:
+Structured logging enabled for:
 
-* APIs
-* services
+* API requests
 * AI operations
-* workers
-* vector retrieval
+* vector search
 * database operations
+* Celery workers
+* RAG retrieval
 
-Logs are stored in:
+Logs stored in:
 
 ```text
-var/log/
+logs/
 ```
 
 ---
@@ -397,25 +476,9 @@ pytest
 
 ---
 
-# Run Specific Tests
-
-```bash
-pytest ai_ticket_platform/tests/test_classifier.py
-```
-
-```bash
-pytest ai_ticket_platform/tests/test_rag.py
-```
-
-```bash
-pytest ai_ticket_platform/tests/test_tickets.py
-```
-
----
-
 # Development Commands
 
-## Format Code
+## Format
 
 ```bash
 black .
@@ -423,7 +486,7 @@ black .
 
 ---
 
-## Run Linter
+## Lint
 
 ```bash
 ruff check .
@@ -431,7 +494,7 @@ ruff check .
 
 ---
 
-## Run Type Checks
+## Type Checking
 
 ```bash
 mypy ai_ticket_platform
@@ -439,76 +502,97 @@ mypy ai_ticket_platform
 
 ---
 
-# Makefile Commands
+# Docker Commands
+
+## Build
 
 ```bash
-make install
-make run
-make worker
-make test
-make lint
-make format
-make docker-up
-make docker-down
+docker compose build
 ```
 
 ---
 
-# Security
+## Start
 
-Current security features:
-
-* JWT utilities
-* password hashing
-* request validation
-* upload validation
-* tenant isolation
-
-Planned:
-
-* OAuth2
-* RBAC
-* SSO
-* MFA
+```bash
+docker compose up
+```
 
 ---
 
-# Scalability
+## Stop
 
-Designed for:
+```bash
+docker compose down
+```
 
-* horizontal API scaling
-* distributed workers
-* Kubernetes deployment
-* enterprise SaaS workloads
-* AI pipeline extensibility
+---
+
+# Troubleshooting
+
+## Redis Connection Refused
+
+Start Redis:
+
+```bash
+docker start ai-ticket-redis
+```
+
+---
+
+## PostgreSQL Port Already Used
+
+Check:
+
+```bash
+sudo lsof -i :5432
+```
+
+Use Docker PostgreSQL on:
+
+```text
+5433
+```
+
+Update `.env`:
+
+```env
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5433/ai_ticket_platform
+```
+
+---
+
+## RAG Returns No Context
+
+Current limitation:
+
+```text
+InMemoryVectorStore resets after backend restart
+```
+
+Re-upload documents after restart.
+
+Planned fix:
+
+```text
+pgvector persistent vector storage
+```
 
 ---
 
 # Future Roadmap
 
 * pgvector support
+* Persistent vector storage
+* Hybrid search
 * Pinecone integration
 * LangChain agents
-* multi-agent orchestration
-* streaming responses
+* Streaming responses
+* Kubernetes deployment
 * OpenTelemetry tracing
 * Prometheus monitoring
-* Kubernetes deployment
 * S3 document storage
-* enterprise RBAC
-
----
-
-# Documentation
-
-Detailed documentation:
-
-| File                 | Description         |
-| -------------------- | ------------------- |
-| docs/architecture.md | System architecture |
-| docs/api.md          | API documentation   |
-| docs/ai_pipeline.md  | AI pipeline details |
+* Enterprise RBAC
 
 ---
 
@@ -529,5 +613,5 @@ Senior Python Backend & AI Engineer
 # Version
 
 ```text
-1.0.0
+0.1.1
 ```

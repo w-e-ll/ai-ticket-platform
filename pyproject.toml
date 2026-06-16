@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-ticket-platform"
-version = "0.1.0"
+version = "0.1.1"
 description = "Enterprise AI SaaS platform for automatic ticket classification and RAG-powered support workflows."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -71,6 +71,7 @@ dependencies = [
 
     "httpx>=0.28.0",
     "aiofiles>=24.1.0",
+    "sentence-transformers>=5.0.0",
 ]
 
 [project.optional-dependencies]

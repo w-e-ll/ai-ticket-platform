@@ -70,7 +70,7 @@ class DocumentService:
                 "status": "started",
                 "tenant_id": str(tenant_id),
                 "document_id": str(document_id),
-                "filename": upload_file.filename,
+                "document_filename": upload_file.filename,
                 "department": department,
             },
         )
@@ -114,7 +114,7 @@ class DocumentService:
                     "status": "success",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document_id),
-                    "filename": document.filename,
+                    "document_filename": document.filename,
                     "file_size_bytes": file_size_bytes,
                 },
             )
@@ -196,7 +196,7 @@ class DocumentService:
                     "status": "success",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document.id),
-                    "filename": document.filename,
+                    "document_filename": document.filename,
                     "chunk_count": len(chunks),
                     "indexed_count": indexed_count,
                     "embedding_model": self.embedding_provider.model_name(),
@@ -224,7 +224,7 @@ class DocumentService:
                     "status": "failed",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document_id),
-                    "filename": upload_file.filename,
+                    "document_filename": upload_file.filename,
                     "exception_type": type(exc).__name__,
                 },
                 exc_info=True,
@@ -352,7 +352,7 @@ class DocumentService:
                 "event": "document_text_extraction_started",
                 "operation": "extract_text",
                 "status": "started",
-                "filename": file_path.name,
+                "document_filename": file_path.name,
             },
         )
 
@@ -383,7 +383,7 @@ class DocumentService:
                     "event": "document_text_extraction_completed",
                     "operation": "extract_text",
                     "status": "success",
-                    "filename": file_path.name,
+                    "document_filename": file_path.name,
                     "text_length": len(text),
                 },
             )
@@ -400,7 +400,7 @@ class DocumentService:
                     "event": "document_text_extraction_failed",
                     "operation": "extract_text",
                     "status": "failed",
-                    "filename": file_path.name,
+                    "document_filename": file_path.name,
                     "exception_type": type(exc).__name__,
                 },
                 exc_info=True,
@@ -436,7 +436,7 @@ class DocumentService:
                 "event": "upload_file_validation_completed",
                 "operation": "validate_upload_file",
                 "status": "success",
-                "filename": filename,
+                "document_filename": filename,
                 "extension": extension,
             },
         )
@@ -470,7 +470,7 @@ class DocumentService:
                     "status": "started",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document_id),
-                    "filename": filename,
+                    "document_filename": filename,
                 },
             )
 
@@ -502,7 +502,7 @@ class DocumentService:
                     "status": "success",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document_id),
-                    "filename": filename,
+                    "document_filename": filename,
                     "file_size_bytes": file_size_bytes,
                 },
             )
@@ -521,7 +521,7 @@ class DocumentService:
                     "status": "failed",
                     "tenant_id": str(tenant_id),
                     "document_id": str(document_id),
-                    "filename": upload_file.filename,
+                    "document_filename": upload_file.filename,
                     "exception_type": type(exc).__name__,
                 },
                 exc_info=True,
@@ -532,7 +532,6 @@ class DocumentService:
     def _extract_pdf_text(self, file_path: Path) -> str:
         """Extract text from PDF file."""
         reader = PdfReader(str(file_path))
-
         page_texts: list[str] = []
 
         for page_index, page in enumerate(reader.pages):
@@ -544,7 +543,7 @@ class DocumentService:
                     "event": "pdf_page_text_extracted",
                     "operation": "extract_pdf_text",
                     "status": "success",
-                    "filename": file_path.name,
+                    "document_filename": file_path.name,
                     "page_index": page_index,
                     "text_length": len(text),
                 },
@@ -570,7 +569,7 @@ class DocumentService:
                 "event": "docx_text_extracted",
                 "operation": "extract_docx_text",
                 "status": "success",
-                "filename": file_path.name,
+                "document_filename": file_path.name,
                 "paragraph_count": len(paragraphs),
             },
         )
@@ -587,7 +586,7 @@ class DocumentService:
                 "event": "txt_text_extracted",
                 "operation": "extract_txt_text",
                 "status": "success",
-                "filename": file_path.name,
+                "document_filename": file_path.name,
                 "text_length": len(text),
             },
         )

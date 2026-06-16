@@ -86,3 +86,4 @@ node_modules/
 # Mac/Linux swap
 *.swp
 *.swo
+.env

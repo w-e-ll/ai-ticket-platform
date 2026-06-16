@@ -7,6 +7,36 @@ and this project follows Semantic Versioning.
 
 ---
 
+# [0.1.1] - 2026-06-16
+
+## Fixed
+
+* Fixed API router registration for health, documents, tickets, chat, and admin endpoints.
+* Fixed incorrect `api` package path issue caused by a leading space in the folder name.
+* Fixed reserved Python logging fields by replacing unsafe `filename` usage with `document_filename`.
+* Fixed document upload flow by validating tenant existence and database table initialization.
+* Fixed PostgreSQL Docker port conflict by supporting isolated local Docker database usage.
+* Fixed Celery startup by using the explicit Celery app path.
+* Fixed missing `sentence-transformers` dependency for local embedding support.
+
+## Added
+
+* Added working document upload and indexing flow through Streamlit and FastAPI.
+* Added demo tenant and demo user setup requirements for local development.
+* Added database initialization support using SQLAlchemy metadata.
+* Added clearer local infrastructure setup for PostgreSQL and Redis.
+
+## Changed
+
+* Improved local development workflow for backend, frontend, Celery, Redis, and PostgreSQL.
+* Improved error diagnosis for upload, ticket creation, and RAG retrieval flows.
+* Confirmed current vector store limitation: in-memory vectors are lost after backend restart.
+
+## Known Limitations
+
+* Vector search currently uses in-memory storage and is not persistent across backend restarts.
+* Persistent vector storage with PostgreSQL pgvector is planned for the next minor release.
+
 # [0.1.0] - 2026-06-16
 
 ## Added

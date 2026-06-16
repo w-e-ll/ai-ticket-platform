@@ -108,3 +108,20 @@ async def close_database_connection() -> None:
             "status": "success",
         },
     )
+
+
+async def init_db() -> None:
+    """Create database tables from SQLAlchemy models."""
+    from ai_ticket_platform.app.models.db import Base
+
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
+
+    logger.info(
+        "Database tables initialized",
+        extra={
+            "event": "database_tables_initialized",
+            "operation": "init_db",
+            "status": "success",
+        },
+    )
