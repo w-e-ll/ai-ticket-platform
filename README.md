@@ -2,6 +2,21 @@
 
 Enterprise-grade AI-powered ticket classification and Retrieval-Augmented Generation (RAG) SaaS platform built with FastAPI, Streamlit, PostgreSQL, Redis, Celery, and OpenAI.
 
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-production--api-green)
+![Streamlit](https://img.shields.io/badge/Streamlit-frontend-red)
+![Embeddings](https://img.shields.io/badge/Embeddings-SentenceTransformers-purple)
+![OpenAI](https://img.shields.io/badge/OpenAI-supported-black)
+![VectorDB](https://img.shields.io/badge/VectorDB-Chroma-orange)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-supported-blue)
+![Redis](https://img.shields.io/badge/Redis-cache--queue-red)
+![Celery](https://img.shields.io/badge/Celery-workers-green)
+![Docker](https://img.shields.io/badge/Docker-supported-blue)
+![Pytest](https://img.shields.io/badge/pytest-tested-yellowgreen)
+![Architecture](https://img.shields.io/badge/Architecture-production--style-purple)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+Production-style AI SaaS platform for intelligent ticket ingestion, semantic knowledge-base search, RAG-powered AI support chat, automated classification, and enterprise workflow orchestration.
 ---
 
 ## Screenshots
