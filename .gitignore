@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.local
+
+# IDEs
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Storage
+storage/
+data/
+
+# Database
+*.db
+*.sqlite3
+
+# ChromaDB
+chroma/
+chromadb/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MyPy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Docker
+docker-compose.override.yml
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Celery
+celerybeat-schedule
+
+# Monitoring
+grafana-data/
+prometheus-data/
+loki-data/
+
+# Uploaded resumes
+uploads/
+processed/
+
+# Node (future frontend)
+node_modules/
+
+# Mac/Linux swap
+*.swp
+*.swo
